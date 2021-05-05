@@ -1,9 +1,24 @@
+const { program } = require('commander');
+program.version('0.0.1');
+
+program
+  .option('-a, --action <arg>', 0,5)
+  .option('-s, --shift <arg>', 0,1)
+
+program.parse(process.argv);
+
+const options = program.opts();
+const action = options.action;
+
+
+let shift;
 const fs = require('fs');
 const input = fs.readFileSync('input.txt',"UTF-8");
-let shift = 7;
+if (options.shift)  shift = `${options.shift}`;
 let output = "";
 
-console.log(input);
+console.log(shift);
+console.log(`${options.action}`);
 
 function makeRange (start, end) {
     let answer = {};
