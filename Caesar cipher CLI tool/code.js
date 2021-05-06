@@ -2,23 +2,40 @@ const { program } = require('commander');
 program.version('0.0.1');
 
 program
-  .option('-a, --action <arg>', 0,5)
-  .option('-s, --shift <arg>', 0,1)
+  .option('-a, --action <arg>', 0,0)
+  .option('-s, --shift <arg>', 0,0)
+  .option('-i, --input <arg>', 0,0)
+  .option('-o, --output <arg>', 0,0)
 
 program.parse(process.argv);
-
 const options = program.opts();
-const action = options.action;
 
 
+let action;
 let shift;
+let inputFile;
+let outputFile;
 const fs = require('fs');
-const input = fs.readFileSync('input.txt',"UTF-8");
+
 if (options.shift)  shift = `${options.shift}`;
+if (options.action) action = `${options.action}`;
+if (options.input) inputFile = `${options.input}`;
+if (options.output) outputFile = `${options.output}`;
+console.log(inputFile);
+const input = fs.readFileSync(inputFile,"UTF-8");
 let output = "";
 
-console.log(shift);
-console.log(`${options.action}`);
+
+try {
+    if (shift == undefined) {
+        throw new Error("Нет обязательного параметра SHIFT");
+    }
+} catch(err) {
+    console.log(err.message);
+}
+
+
+
 
 function makeRange (start, end) {
     let answer = {};
@@ -28,28 +45,31 @@ function makeRange (start, end) {
     return answer;
 }
 
-function encode(charCode) {
+function encode(charCode, action, shift) {
 
-    function* generator(start, end) {
+    function* generator(start, end, shift) {
         let i=charCode;
         while (true) {
            
-            if (shift > 0) {
+            if ((action == "encode" && shift > 0) || (action == "decode" && shift < 0)) {
                 i++;
                 if (i > end) i = start;
                 yield i;
-            } else if (shift < 0) {
+            } else if (action == "encode" && shift < 0 || action == "decode" && shift > 0) {
                 i--;
                 if (i < start) i = end;
                 yield i;
-            }  
+            }  else if (shift == undefined) {
+                throw new ReadError("Нет обязательного параметра SHIFT");
+            }
+            
         }
     }
 
     let answer;
     
     if (charCode in rangeLittle) {
-        generator = generator(97,122);
+        generator = generator(97, 122, shift);
         for (let i = 0; i < Math.abs(shift); i++) {
             answer = generator.next().value;
         }
@@ -57,7 +77,7 @@ function encode(charCode) {
     }
 
     if (charCode in rangeBig) {
-        generator = generator(65,90);
+        generator = generator(65, 90, shift);
         for (let i = 0; i < Math.abs(shift); i++) {
             answer = generator.next().value;
         }
@@ -72,12 +92,15 @@ const rangeLittle = makeRange(97, 122);
 const rangeBig = makeRange(65, 90);
 
 for (char of input) {
-    output = output + String.fromCharCode(encode(char.charCodeAt(0)));  
+    output = output + String.fromCharCode(encode(char.charCodeAt(0), action, shift));  
 }
 
-
+console.log(action);
+console.log(shift);
 console.log(output);
-fs.writeFileSync('output.txt',output);
+fs.appendFileSync('output.txt', output);
+
+
 
 
 
