@@ -38,23 +38,9 @@ if ( outputPath == 0) {
   writeableStream = fs.createWriteStream(`${outputPath}`, { flags : "r+" , start : startPosition });
 }
 
-
 const transformStream = new myTransform();
+
 
 module.exports.readableStream = readableStream;
 module.exports.writeableStream = writeableStream;
 module.exports.transformStream = transformStream;
-
-
-
-
-
-  
-  
-  
-
-
-
-
-
-

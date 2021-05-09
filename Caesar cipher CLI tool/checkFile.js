@@ -1,3 +1,4 @@
+const moduleExitCode = require("./exitCode"); 
 const fs = require("fs");
 
 function checkFile(path, mode) {
@@ -6,12 +7,10 @@ function checkFile(path, mode) {
             fs.accessSync(path, mode);
             return;
         } catch (err) {
-            console.error(`no access to ${path}`);
-            process.exit(1);
+            moduleExitCode(`no access to ${path}`);
         }
     }
-    console.error(`no such file ${path}`)
-    process.exit(1);
+    moduleExitCode(`no such file ${path}`);
 }
 
 module.exports = checkFile;
