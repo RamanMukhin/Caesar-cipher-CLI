@@ -21,6 +21,9 @@ const outputPath = moduleArguments.outputPath;
 let writeableStream;
 let readableStream;
 
+const startPosition = fs.existsSync(`${outputPath}`) ? fs.readFileSync(`${outputPath}`,"UTF-8").length : 0;
+//const startPosition = 0;
+
 
 if (inputPath == 0) {
     readableStream = process.stdin;
@@ -31,7 +34,7 @@ if (inputPath == 0) {
 if (outputPath == 0) {
     writeableStream = process.stdout;
 } else {
-    writeableStream = fs.createWriteStream(`${outputPath}`);
+    writeableStream = fs.createWriteStream(`${outputPath}`, { flags : "r+" , start : startPosition });
 }
 
 //const readableStream = fs.createReadStream(`${inputPath}`, "utf8");

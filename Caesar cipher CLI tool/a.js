@@ -1,9 +1,11 @@
-const readline = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
-  
-  readline.question(`What's your name?`, name => {
-    console.log(`Hi ${name}!`)
-    readline.close()
-  })
+/*
+const fs = require("fs");
+
+let a = "ABCDEABCDEABCDE";
+let stream = fs.createReadStream(a);
+//process.stdout = a;
+stream = process.stdout;
+stream.pipe(process.stdout);
+*/
+let a = "ОШИБКА";
+console.error(a);
