@@ -1,8 +1,9 @@
 const { Transform } = require('stream');
 const fs = require("fs");
 const coder = require("./coding.js");
+const checkFile = require("./checkFile");
 const moduleArguments = require("./arguments");
-const { pipeline } = require('stream')
+
 class myTransform extends Transform {
   _transform(chunk, encoding, callback) {
     try {
@@ -20,27 +21,24 @@ const inputPath = moduleArguments.inputPath;
 const outputPath = moduleArguments.outputPath;
 let writeableStream;
 let readableStream;
-
 const startPosition = fs.existsSync(`${outputPath}`) ? fs.readFileSync(`${outputPath}`,"UTF-8").length : 0;
-//const startPosition = 0;
 
 
 if (inputPath == 0) {
     readableStream = process.stdin;
 } else {
-    readableStream = fs.createReadStream(`${inputPath}`, "utf8");
+  checkFile( `${inputPath}`, fs.constants.R_OK);
+  readableStream = fs.createReadStream(`${inputPath}`, "utf8");
 }
 
-if (outputPath == 0) {
-    writeableStream = process.stdout;
+if ( outputPath == 0) {
+  writeableStream = process.stdout;
 } else {
-    writeableStream = fs.createWriteStream(`${outputPath}`, { flags : "r+" , start : startPosition });
+  checkFile( `${outputPath}`, fs.constants.F_OK);
+  writeableStream = fs.createWriteStream(`${outputPath}`, { flags : "r+" , start : startPosition });
 }
 
-//const readableStream = fs.createReadStream(`${inputPath}`, "utf8");
-//const readableStream = process.stdin;
-//const writeableStream = fs.createWriteStream(`${outputPath}`);
-//const writeableStream = process.stdout;
+
 const transformStream = new myTransform();
 
 module.exports.readableStream = readableStream;
